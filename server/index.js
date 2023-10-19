@@ -6,11 +6,20 @@ const io = require('socket.io')(http, {
 });
 
 io.on('connection', (socket) => {
+    let str = '';
+    if(socket.request.headers["sec-ch-ua"].includes("Google Chrome")){
+        socket.join("Chrome");
+        str="Chrome";
+    }
+    else{
+        socket.join("Other");
+        str="Other";
+    }
     console.log('a user connected');
 
     socket.on('message', (message) =>     {
         console.log(message);
-        io.emit('message', `${socket.id.substr(0,2)} said ${message}` );   
+        io.to(str).emit('message', `${socket.id.substr(0,2)} said ${message}` );   
     });
 });
 
